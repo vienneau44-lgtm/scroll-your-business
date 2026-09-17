@@ -23,6 +23,13 @@ create policy "Public can read claims"
 -- Intentionally no insert/update/delete policy for the public (anon) role.
 -- Inserts happen only via lib/supabaseAdmin.js in pages/api/stripe-webhook.js.
 
+-- Grants and RLS are two separate checks in Postgres: RLS decides which rows
+-- an operation applies to, but a role still needs a baseline table grant to
+-- touch the table at all — service_role bypasses RLS but not this. Some
+-- Supabase projects don't grant this automatically, so it's explicit here.
+grant usage on schema public to service_role;
+grant select, insert, update, delete on table claims to service_role;
+
 -- ---------------------------------------------------------------------
 -- Storage bucket for logos:
 -- 1. Go to Storage > Create a new bucket.

@@ -6,7 +6,9 @@ Claude's in-chat storage.
 
 ## What this is
 
-- `/` — the live scroll (founding spots pinned at top, standard spots below).
+- `/` — the live scroll, a grid of logo cards in first-come-first-published
+  order (both tiers mixed by actual claim time — founding spots are marked
+  with a gold border, not pinned to the top).
 - `/claim` — the registration flow: pick a tier, name your business, upload
   a logo, pay with Stripe.
 - A spot only appears on the scroll **after Stripe confirms payment**, via

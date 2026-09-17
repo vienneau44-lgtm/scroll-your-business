@@ -18,7 +18,9 @@ function initials(name) {
 export default function Home({ claims }) {
   const founding = claims.filter((c) => c.tier === 'founding');
   const standard = claims.filter((c) => c.tier === 'standard');
-  const ordered = [...founding, ...standard];
+  // First come, first published: claims already come back ordered by
+  // created_at ascending, so both tiers are mixed by actual claim time.
+  const ordered = claims;
   const remaining = Math.max(FOUNDING_CAP - founding.length, 0);
   const earlyBirdRemaining = Math.max(EARLY_BIRD_CAP - founding.length, 0);
   const recentForTicker = ordered.slice(-15).reverse();
@@ -74,21 +76,23 @@ export default function Home({ claims }) {
             No one has claimed a spot yet. Be the first.
           </div>
         ) : (
-          ordered.slice().reverse().map((c, i) => {
-            const rank = ordered.length - i;
-            return (
-              <div key={i} className={`wall-row ${c.tier === 'founding' ? 'founding' : ''}`}>
-                <span className="wall-rank mono">#{rank}</span>
-                {c.logo_url ? (
-                  <img className="wall-logo" src={c.logo_url} alt="" />
-                ) : (
-                  <div className="wall-logo">{initials(c.name)}</div>
-                )}
-                <span className="wall-name">{c.name}</span>
-                <span className="wall-tag">{c.tier === 'founding' ? 'Founding' : 'Standard'}</span>
-              </div>
-            );
-          })
+          <div className="wall-grid">
+            {ordered.slice().reverse().map((c, i) => {
+              const rank = ordered.length - i;
+              return (
+                <div key={i} className={`wall-card ${c.tier === 'founding' ? 'founding' : ''}`}>
+                  <span className="wall-rank mono">#{rank}</span>
+                  {c.logo_url ? (
+                    <img className="wall-logo" src={c.logo_url} alt="" />
+                  ) : (
+                    <div className="wall-logo">{initials(c.name)}</div>
+                  )}
+                  <span className="wall-name">{c.name}</span>
+                  <span className="wall-tag">{c.tier === 'founding' ? 'Founding' : 'Standard'}</span>
+                </div>
+              );
+            })}
+          </div>
         )}
       </main>
 
