@@ -18,8 +18,8 @@ function initials(name) {
 function WallGrid({ items }) {
   return (
     <div className="wall-grid">
-      {items.slice().reverse().map((c, i) => {
-        const rank = items.length - i;
+      {items.map((c, i) => {
+        const rank = i + 1;
         return (
           <div key={i} className={`wall-card ${c.tier === 'founding' ? 'founding' : ''}`}>
             <span className="wall-rank mono">#{rank}</span>
