@@ -15,11 +15,33 @@ function initials(name) {
   return name.trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
 }
 
+function WallGrid({ items }) {
+  return (
+    <div className="wall-grid">
+      {items.slice().reverse().map((c, i) => {
+        const rank = items.length - i;
+        return (
+          <div key={i} className={`wall-card ${c.tier === 'founding' ? 'founding' : ''}`}>
+            <span className="wall-rank mono">#{rank}</span>
+            {c.logo_url ? (
+              <img className="wall-logo" src={c.logo_url} alt="" />
+            ) : (
+              <div className="wall-logo">{initials(c.name)}</div>
+            )}
+            <span className="wall-name">{c.name}</span>
+            <span className="wall-tag">{c.tier === 'founding' ? 'Founding' : 'Standard'}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function Home({ claims }) {
   const founding = claims.filter((c) => c.tier === 'founding');
   const standard = claims.filter((c) => c.tier === 'standard');
-  // First come, first published: claims already come back ordered by
-  // created_at ascending, so both tiers are mixed by actual claim time.
+  // claims already comes back ordered by created_at ascending (first come,
+  // first published), used here for the ticker and totals.
   const ordered = claims;
   const remaining = Math.max(FOUNDING_CAP - founding.length, 0);
   const earlyBirdRemaining = Math.max(EARLY_BIRD_CAP - founding.length, 0);
@@ -76,23 +98,24 @@ export default function Home({ claims }) {
             No one has claimed a spot yet. Be the first.
           </div>
         ) : (
-          <div className="wall-grid">
-            {ordered.slice().reverse().map((c, i) => {
-              const rank = ordered.length - i;
-              return (
-                <div key={i} className={`wall-card ${c.tier === 'founding' ? 'founding' : ''}`}>
-                  <span className="wall-rank mono">#{rank}</span>
-                  {c.logo_url ? (
-                    <img className="wall-logo" src={c.logo_url} alt="" />
-                  ) : (
-                    <div className="wall-logo">{initials(c.name)}</div>
-                  )}
-                  <span className="wall-name">{c.name}</span>
-                  <span className="wall-tag">{c.tier === 'founding' ? 'Founding' : 'Standard'}</span>
+          <>
+            {founding.length > 0 && (
+              <>
+                <div style={{ fontSize: 11.5, color: 'var(--ink-dim)', textTransform: 'uppercase', letterSpacing: '0.07em', margin: '30px 0 4px' }}>
+                  Founding ({founding.length.toLocaleString()})
                 </div>
-              );
-            })}
-          </div>
+                <WallGrid items={founding} />
+              </>
+            )}
+            {standard.length > 0 && (
+              <>
+                <div style={{ fontSize: 11.5, color: 'var(--ink-dim)', textTransform: 'uppercase', letterSpacing: '0.07em', margin: '40px 0 4px' }}>
+                  Standard ({standard.length.toLocaleString()})
+                </div>
+                <WallGrid items={standard} />
+              </>
+            )}
+          </>
         )}
       </main>
 
